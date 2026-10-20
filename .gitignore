@@ -1,0 +1,7 @@
+# Ignore common build artifacts
+*.class
+*.jar
+*.log
+/.idea/
+/.vscode/
+/target/

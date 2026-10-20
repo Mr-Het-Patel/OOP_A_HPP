@@ -1,0 +1,104 @@
+#include <iostream>
+using namespace std;
+
+// Base class
+class Account {
+protected:
+    string holderName;
+    int accountNumber;
+    float balance;
+
+public:
+    Account(string name, int accNo, float bal) {
+        holderName = name;
+        accountNumber = accNo;
+        balance = bal;
+    }
+
+    virtual void deposit(float amount) {
+        balance += amount;
+        cout << "Deposited: " << amount << endl;
+    }
+
+    virtual void withdraw(float amount) {
+        balance -= amount;
+    }
+
+    virtual void calculateInterest() = 0; // pure virtual
+
+    virtual void display() {
+        cout << "\nAccount Holder: " << holderName;
+        cout << "\nAccount Number: " << accountNumber;
+        cout << "\nBalance: " << balance << endl;
+    }
+};
+
+// Savings Account
+class Savings : public Account {
+public:
+    Savings(string name, int accNo, float bal)
+        : Account(name, accNo, bal) {}
+
+    void calculateInterest() override {
+        float interest = balance * 0.04;
+        balance += interest;
+        cout << "Interest (4%) added: " << interest << endl;
+    }
+
+    void withdraw(float amount) override {
+        if (balance - amount < 1000) {
+            cout << "Cannot withdraw! Minimum balance must be 1000.\n";
+        } else {
+            balance -= amount;
+            cout << "Withdrawn: " << amount << endl;
+        }
+    }
+};
+
+// Current Account
+class Current : public Account {
+public:
+    Current(string name, int accNo, float bal)
+        : Account(name, accNo, bal) {}
+
+    void calculateInterest() override {
+        cout << "No interest for current account.\n";
+    }
+
+    void withdraw(float amount) override {
+        if (amount > balance) {
+            cout << "Withdrawal failed! Not enough balance.\n";
+        } else {
+            balance -= amount;
+            cout << "Withdrawn: " << amount << endl;
+        }
+    }
+};
+
+int main() {
+    Account* acc;
+
+    // Creating accounts
+    Savings s1("Rahul", 101, 5000);
+    Current c1("Priya", 102, 3000);
+
+    cout << "\n--- Savings Account ---\n";
+    acc = &s1;
+    acc->display();
+    acc->deposit(1000);
+    acc->calculateInterest();
+    acc->withdraw(4500);
+    acc->display();
+
+    cout << "\n--------------------------\n";
+
+    cout << "\n--- Current Account ---\n";
+    acc = &c1;
+    acc->display();
+    acc->deposit(500);
+    acc->calculateInterest();
+    acc->withdraw(4000);
+    acc->display();
+
+    return 0;
+}

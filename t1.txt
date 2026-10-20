@@ -1,0 +1,71 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class Student {
+public:
+    char name[50];
+    float m1, m2, m3;
+
+    void input() {
+        cout << "Enter Name: ";
+        cin >> name;
+        cout << "Enter marks of 3 subjects: ";
+        cin >> m1 >> m2 >> m3;
+    }
+
+    void display() {
+        float total = m1 + m2 + m3;
+        float avg = total / 3;
+
+        cout << "\nName: " << name;
+        cout << "\nMarks: " << m1 << ", " << m2 << ", " << m3;
+        cout << "\nTotal: " << total;
+        cout << "\nAverage: " << avg << endl;
+    }
+
+    float getTotal() {
+        return (m1 + m2 + m3);
+    }
+};
+
+int main() {
+    Student s;
+    ofstream fout("students.dat", ios::binary);
+    int n;
+
+    cout << "Enter number of students: ";
+    cin >> n;
+
+    // Writing to file
+    for (int i = 0; i < n; i++) {
+        cout << "\nEnter details of student " << i + 1 << ":\n";
+        s.input();
+        fout.write((char*)&s, sizeof(s));
+    }
+    fout.close();
+
+    // Reading from file
+    ifstream fin("students.dat", ios::binary);
+
+    Student topper;
+    float maxTotal = 0;
+
+    cout << "\n--- Student Records ---\n";
+
+    while (fin.read((char*)&s, sizeof(s))) {
+        s.display();
+
+        if (s.getTotal() > maxTotal) {
+            maxTotal = s.getTotal();
+            topper = s;
+        }
+    }
+
+    fin.close();
+
+    cout << "\n--- Topper ---\n";
+    topper.display();
+
+    return 0;
+}
